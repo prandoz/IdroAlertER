@@ -1,0 +1,55 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.11.35327.3
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "server", "server", "{B9094CF9-3D46-47D7-8F2B-187411749F1C}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "shared", "shared", "{03D1D3A3-C102-4EC6-94AB-56C75552A427}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IdroAlertER.Common", "shared\IdroAlertER.Common\IdroAlertER.Common.csproj", "{699A6DF4-E592-4485-AF54-94BF5F8EB8F3}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IdroAlertER.Infrastructure", "server\IdroAlertER.Infrastructure\IdroAlertER.Infrastructure.csproj", "{0625761F-4080-4142-8989-DBF24AF6F7A3}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IdroAlertER.Application", "server\IdroAlertER.Application\IdroAlertER.Application.csproj", "{95BAAE4A-93BC-4C3E-8F43-788B9D8F9F0A}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{03CE26E0-6ED3-4693-BC1E-2C64AE080020}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IdroAlertER.Services", "src\IdroAlertER.Services\IdroAlertER.Services.csproj", "{0743DC6E-BB1E-4105-8C40-06FAD47A6A11}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{699A6DF4-E592-4485-AF54-94BF5F8EB8F3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{699A6DF4-E592-4485-AF54-94BF5F8EB8F3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{699A6DF4-E592-4485-AF54-94BF5F8EB8F3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{699A6DF4-E592-4485-AF54-94BF5F8EB8F3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0625761F-4080-4142-8989-DBF24AF6F7A3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0625761F-4080-4142-8989-DBF24AF6F7A3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0625761F-4080-4142-8989-DBF24AF6F7A3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0625761F-4080-4142-8989-DBF24AF6F7A3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{95BAAE4A-93BC-4C3E-8F43-788B9D8F9F0A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{95BAAE4A-93BC-4C3E-8F43-788B9D8F9F0A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{95BAAE4A-93BC-4C3E-8F43-788B9D8F9F0A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{95BAAE4A-93BC-4C3E-8F43-788B9D8F9F0A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0743DC6E-BB1E-4105-8C40-06FAD47A6A11}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0743DC6E-BB1E-4105-8C40-06FAD47A6A11}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0743DC6E-BB1E-4105-8C40-06FAD47A6A11}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0743DC6E-BB1E-4105-8C40-06FAD47A6A11}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{699A6DF4-E592-4485-AF54-94BF5F8EB8F3} = {03D1D3A3-C102-4EC6-94AB-56C75552A427}
+		{0625761F-4080-4142-8989-DBF24AF6F7A3} = {B9094CF9-3D46-47D7-8F2B-187411749F1C}
+		{95BAAE4A-93BC-4C3E-8F43-788B9D8F9F0A} = {B9094CF9-3D46-47D7-8F2B-187411749F1C}
+		{0743DC6E-BB1E-4105-8C40-06FAD47A6A11} = {03CE26E0-6ED3-4693-BC1E-2C64AE080020}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {6C6B62D9-565C-4A85-9975-C28CE92C3D57}
+	EndGlobalSection
+EndGlobal
