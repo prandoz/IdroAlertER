@@ -1,4 +1,10 @@
-.vs
+**/.vs
 **/obj
 **/bin
-*.nupkg
+**/Logs
+*.user
+*.suo
+*.cache
+**/Properties/PublishProfiles
+*.orig
+*.Development.*

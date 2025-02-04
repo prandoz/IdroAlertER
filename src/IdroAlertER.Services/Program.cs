@@ -13,6 +13,16 @@ class Program
 
 	public static IHostBuilder CreateHostBuilder(string[] args) =>
 		Host.CreateDefaultBuilder(args)
+			.ConfigureAppConfiguration((context, config) =>
+			{
+				// Aggiungi i file di configurazione
+				var env = "Development";
+
+				config.SetBasePath(AppContext.BaseDirectory)
+					.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+					.AddJsonFile($"appsettings.{env}.json", optional: true, reloadOnChange: true)
+					.AddEnvironmentVariables();
+			})
 			.ConfigureServices((context, services) =>
 			{
 				// Aggiungi la configurazione per leggere appsettings.json

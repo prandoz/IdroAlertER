@@ -9,14 +9,17 @@ internal class LivelloIdrometricoBLService : ILivelloIdrometricoBLService
 {
 	private readonly ITimeStampService _timeStampService;
 	private readonly ILivelloIdrometricoHttpService _livelloIdrometricoHttpService;
+	private readonly ITelegramBotService _telegramHttpService;
 	private readonly long _timeStampAttuale;
 	private readonly List<string> _nomiStazioni;
 	private readonly string _sogliaMinima;
 
-	public LivelloIdrometricoBLService(IConfiguration configuration, ITimeStampService timeStampService, ILivelloIdrometricoHttpService livelloIdrometricoHttpService)
+	public LivelloIdrometricoBLService(IConfiguration configuration, ITimeStampService timeStampService, ILivelloIdrometricoHttpService livelloIdrometricoHttpService,
+										ITelegramBotService telegramHttpService)
 	{
 		_timeStampService = timeStampService;
 		_livelloIdrometricoHttpService = livelloIdrometricoHttpService;
+		_telegramHttpService = telegramHttpService;
 
 		var dataConfigurazione = configuration.GetSection("Test data").Get<string>();
 		var oraConfigurazione = configuration.GetSection("Test ora").Get<string>();
@@ -49,7 +52,7 @@ internal class LivelloIdrometricoBLService : ILivelloIdrometricoBLService
 			// Se è cambiato valore dalla lettura precedente
 			if (valoriStazione.ValoreAttuale != valoriStazione.ValorePrecedente)
 			{
-				message.AppendFormat("Il livello della stazione {0} ", valoriStazione.NomeStaz);
+				var messaggioStazione = $"Il livello della stazione {valoriStazione.NomeStaz} ";
 				var differenzaLivello = Math.Round((decimal)(valoriStazione.ValoreAttuale > valoriStazione.ValorePrecedente
 										? valoriStazione.ValoreAttuale - valoriStazione.ValorePrecedente : valoriStazione.ValoreAttuale - valoriStazione.ValorePrecedente), 2);
 
@@ -60,11 +63,11 @@ internal class LivelloIdrometricoBLService : ILivelloIdrometricoBLService
 					{
 						if (valoriStazione.ValorePrecedente < valoriStazione.SogliaRossa)
 						{
-							message.AppendFormat("è PASSATO in soglia ROSSA ed è aumentato di {0} metri", differenzaLivello);
+							await _telegramHttpService.SendAsync($"{messaggioStazione} è PASSATO in soglia ROSSA ed è aumentato di {differenzaLivello} metri");
 						}
 						else
 						{
-							message.AppendFormat("è ancora in soglia ROSSA ed è aumentato di {0} metri", differenzaLivello);
+							await _telegramHttpService.SendAsync($"{messaggioStazione} è ancora in soglia ROSSA ed è aumentato di {differenzaLivello} metri");
 						}
 					}
 					else
@@ -75,11 +78,11 @@ internal class LivelloIdrometricoBLService : ILivelloIdrometricoBLService
 							{
 								if (valoriStazione.ValorePrecedente < valoriStazione.SogliaArancione)
 								{
-									message.AppendFormat("è PASSATO in soglia ARANCIONE ed è aumentato di {0} metri", differenzaLivello);
+									await _telegramHttpService.SendAsync($"{messaggioStazione} è PASSATO in soglia ARANCIONE ed è aumentato di {differenzaLivello} metri");
 								}
 								else
 								{
-									message.AppendFormat("è ancora in soglia ARANCIONE ed è aumentato di {0} metri", differenzaLivello);
+									await _telegramHttpService.SendAsync($"{messaggioStazione} è ancora in soglia ARANCIONE ed è aumentato di {differenzaLivello} metri");
 								}
 							}
 							else
@@ -90,11 +93,11 @@ internal class LivelloIdrometricoBLService : ILivelloIdrometricoBLService
 									{
 										if (valoriStazione.ValorePrecedente < valoriStazione.SogliaGialla)
 										{
-											message.AppendFormat("è PASSATO in soglia GIALLA ed è aumentato di {0} metri", differenzaLivello);
+											await _telegramHttpService.SendAsync($"{messaggioStazione} è PASSATO in soglia GIALLA ed è aumentato di {differenzaLivello} metri");
 										}
 										else
 										{
-											message.AppendFormat("è ancora in soglia GIALLA ed è aumentato di {0} metri", differenzaLivello);
+											await _telegramHttpService.SendAsync($"{messaggioStazione} è ancora in soglia GIALLA ed è aumentato di {differenzaLivello} metri");
 										}
 									}
 								}
@@ -107,7 +110,7 @@ internal class LivelloIdrometricoBLService : ILivelloIdrometricoBLService
 
 					if (valoriStazione.ValoreAttuale >= valoriStazione.SogliaRossa)
 					{
-						message.AppendFormat("è ancora in soglia ROSSA ed è diminuito di {0} metri", differenzaLivello);
+						await _telegramHttpService.SendAsync($"{messaggioStazione} è ancora in soglia ROSSA ed è diminuito di {differenzaLivello} metri");
 					}
 					else
 					{
@@ -115,13 +118,13 @@ internal class LivelloIdrometricoBLService : ILivelloIdrometricoBLService
 						{
 							if (valoriStazione.ValorePrecedente >= valoriStazione.SogliaRossa)
 							{
-								message.AppendFormat("è TORNATO in soglia ARANCIONE ed è diminuito di {0} metri", differenzaLivello);
+								await _telegramHttpService.SendAsync($"{messaggioStazione} è TORNATO in soglia ARANCIONE ed è diminuito di {differenzaLivello} metri");
 							}
 							else
 							{
 								if (_sogliaMinima == "arancione" || _sogliaMinima == "gialla")
 								{
-									message.AppendFormat("è ancora in soglia ARANCIONE ed è diminuito di {0} metri", differenzaLivello);
+									await _telegramHttpService.SendAsync($"{messaggioStazione} è ancora in soglia ARANCIONE ed è diminuito di {differenzaLivello} metri");
 								}
 							}
 						}
@@ -133,14 +136,14 @@ internal class LivelloIdrometricoBLService : ILivelloIdrometricoBLService
 								{
 									if (_sogliaMinima == "arancione" || _sogliaMinima == "gialla")
 									{
-										message.AppendFormat("è TORNATO in soglia GIALLA ed è diminuito di {0} metri", differenzaLivello);
+										await _telegramHttpService.SendAsync($"{messaggioStazione} è TORNATO in soglia GIALLA ed è diminuito di {differenzaLivello} metri");
 									}
 								}
 								else
 								{
 									if (_sogliaMinima == "gialla")
 									{
-										message.AppendFormat("è ancora in soglia GIALLA ed è diminuito di {0} metri", differenzaLivello);
+										await _telegramHttpService.SendAsync($"{messaggioStazione} è ancora in soglia GIALLA ed è diminuito di {differenzaLivello} metri");
 									}
 								}
 							}

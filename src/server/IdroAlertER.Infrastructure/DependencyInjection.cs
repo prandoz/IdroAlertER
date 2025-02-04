@@ -11,6 +11,7 @@ public static class DependencyInjection
 	public static IServiceCollection AddIdroAlertERInfrastructure(this IServiceCollection services)
 	{
 		services.AddScoped<ILivelloIdrometricoHttpService, LivelloIdrometricoHttpService>();
+		services.AddScoped<ITelegramBotService, TelegramBotService>();
 		services.AddScoped<ITimeStampService, TimeStampService>();
 
 		return services;
