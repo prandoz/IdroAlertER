@@ -1,4 +1,5 @@
-﻿using IdroAlertER.Common.Interfaces.Services;
+﻿using System.Globalization;
+using IdroAlertER.Common.Interfaces.Services;
 
 namespace IdroAlertER.Infrastructure.Services;
 internal class TimeStampService : ITimeStampService
@@ -13,26 +14,41 @@ internal class TimeStampService : ITimeStampService
 		DateTime modifiedTime = localTime.AddMinutes(-1);
 
 		// Convertire la data modificata in timestamp Unix (millisecondi)
-		long unixTimestamp = ((DateTimeOffset)modifiedTime).ToUnixTimeMilliseconds();
-
-		// Restituisce il timestamp Unix
-		return unixTimestamp;
+		return ((DateTimeOffset)modifiedTime).ToUnixTimeMilliseconds();
 	}
 
 	public long GetBefore(long timeStamp)
 	{
-		// Timestamp Unix in millisecondi (esempio)
-		long unixTimestamp = 1738256400000;
-
 		// Convertire il timestamp Unix in DateTime (UTC)
-		DateTime dateTimeUtc = DateTimeOffset.FromUnixTimeMilliseconds(unixTimestamp).UtcDateTime;
+		DateTime dateTimeUtc = DateTimeOffset.FromUnixTimeMilliseconds(timeStamp).UtcDateTime;
 
 		// Sottrarre 15 minuti
 		DateTime newDateTimeUtc = dateTimeUtc.AddMinutes(-15);
 
 		// Convertire la nuova data in timestamp Unix (millisecondi)
-		long newUnixTimestamp = ((DateTimeOffset)newDateTimeUtc).ToUnixTimeMilliseconds();
+		return ((DateTimeOffset)newDateTimeUtc).ToUnixTimeMilliseconds();
+	}
 
-		return newUnixTimestamp;
+	public long Convert(string date, string time)
+	{
+		string format = "dd/MM/yyyy HH:mm"; // Formato atteso
+
+		// Convertire la stringa in DateTime con il formato specifico
+		if (!DateTime.TryParseExact($"{date} {time}", format, CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime localTime))
+		{
+			throw new ArgumentException("Formato data/ora non valido. Usa il formato dd/MM/yyyy HH:mm");
+		}
+
+		// Definire il fuso orario italiano (CET/CEST a seconda del periodo dell'anno)
+		TimeZoneInfo italianTimeZone = TimeZoneInfo.FindSystemTimeZoneById("Central European Standard Time");
+
+		// Otteniamo il corretto offset UTC per quella data
+		TimeSpan offset = italianTimeZone.GetUtcOffset(localTime);
+
+		// Convertiamo in UTC manualmente sottraendo l'offset
+		DateTime utcTime = localTime - offset;
+
+		// Convertiamo in timestamp Unix (millisecondi)
+		return new DateTimeOffset(utcTime).ToUnixTimeMilliseconds();
 	}
 }
