@@ -1,5 +1,5 @@
-﻿namespace IdroAlertER.Application.Entities;
-internal class ValoriStazione
+﻿namespace IdroAlertER.Common.Entities;
+public class ValoriStazione
 {
 	public string? IdStazione { get; set; }
 	public int? Ordinamento { get; set; }
@@ -11,4 +11,5 @@ internal class ValoriStazione
 	public double? SogliaGialla { get; set; }
 	public double? SogliaArancione { get; set; }
 	public double? SogliaRossa { get; set; }
+	public long? TimeStamp { get; set; }
 }

@@ -17,17 +17,7 @@ internal class TimeStampService : ITimeStampService
 		return ((DateTimeOffset)modifiedTime).ToUnixTimeMilliseconds();
 	}
 
-	public long GetBefore(long timeStamp)
-	{
-		// Convertire il timestamp Unix in DateTime (UTC)
-		DateTime dateTimeUtc = DateTimeOffset.FromUnixTimeMilliseconds(timeStamp).UtcDateTime;
-
-		// Sottrarre 15 minuti
-		DateTime newDateTimeUtc = dateTimeUtc.AddMinutes(-15);
-
-		// Convertire la nuova data in timestamp Unix (millisecondi)
-		return ((DateTimeOffset)newDateTimeUtc).ToUnixTimeMilliseconds();
-	}
+	public long GetBefore(long timeStamp) => timeStamp - 900000;
 
 	public long Convert(string date, string time)
 	{

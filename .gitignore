@@ -8,3 +8,4 @@
 **/Properties/PublishProfiles
 *.orig
 *.Development.*
+/src/server/IdroAlertER.Application/Services/LivelloIdrometricoBLService.cs

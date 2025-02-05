@@ -12,6 +12,7 @@ public static class DependencyInjection
 	{
 		services.AddScoped<ILivelloIdrometricoHttpService, LivelloIdrometricoHttpService>();
 		services.AddScoped<ITelegramBotService, TelegramBotService>();
+		services.AddScoped<IGeocalizzazioneService, GeocalizzazioneService>();
 		services.AddScoped<ITimeStampService, TimeStampService>();
 
 		return services;
