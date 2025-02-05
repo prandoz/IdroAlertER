@@ -15,12 +15,12 @@ class Program
 		Host.CreateDefaultBuilder(args)
 			.ConfigureAppConfiguration((context, config) =>
 			{
-				// Aggiungi i file di configurazione
-				var env = "Development";
+				//config.SetBasePath(AppContext.BaseDirectory)
+				//	.AddJsonFile($"appsettings.Development.json", optional: false, reloadOnChange: true)
+				//	.AddEnvironmentVariables();
 
 				config.SetBasePath(AppContext.BaseDirectory)
 					.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
-					.AddJsonFile($"appsettings.{env}.json", optional: true, reloadOnChange: true)
 					.AddEnvironmentVariables();
 			})
 			.ConfigureServices((context, services) =>
