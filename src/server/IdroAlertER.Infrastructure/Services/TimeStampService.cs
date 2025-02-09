@@ -11,13 +11,17 @@ internal class TimeStampService : ITimeStampService
 		DateTime localTime = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, italianTimeZone);
 
 		// Sottrarre un minuto
-		DateTime modifiedTime = localTime.AddMinutes(-1);
+		DateTime modifiedTime = RoundDownToNearest15Minutes(localTime);
 
 		// Convertire la data modificata in timestamp Unix (millisecondi)
 		return ((DateTimeOffset)modifiedTime).ToUnixTimeMilliseconds();
 	}
 
-	public long GetBefore(long timeStamp) => timeStamp - 900000;
+	public long GetBefore(long timeStamp)
+	{
+		var newDateTime = RoundDownToNearest15Minutes(DateTimeOffset.FromUnixTimeMilliseconds(timeStamp).LocalDateTime);
+		return Convert(newDateTime.ToString("dd/MM/yyyy"), newDateTime.ToString("HH:mm"));
+	}
 
 	public long Convert(string date, string time)
 	{
@@ -40,5 +44,18 @@ internal class TimeStampService : ITimeStampService
 
 		// Convertiamo in timestamp Unix (millisecondi)
 		return new DateTimeOffset(utcTime).ToUnixTimeMilliseconds();
+	}
+
+	private static DateTime RoundDownToNearest15Minutes(DateTime dateTime)
+	{
+		int minutes = dateTime.Minute / 15 * 15; // Trova il multiplo inferiore di 15 minuti
+
+		// Se i minuti sono già multipli di 15 ed è maggiore di 0, scaliamo di 15
+		if (dateTime.Minute == minutes && minutes != 0)
+		{
+			minutes -= 15;
+		}
+
+		return new DateTime(dateTime.Year, dateTime.Month, dateTime.Day, dateTime.Hour, minutes, 0);
 	}
 }

@@ -11,7 +11,6 @@ public static class DependencyInjection
 	{
 		services.AddIdroAlertERInfrastructure();
 		services.AddScoped<ILivelloIdrometricoBLService, LivelloIdrometricoBLService>();
-		services.AddHostedService<CronJobService>();
 
 		return services;
 	}

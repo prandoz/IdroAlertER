@@ -2,13 +2,25 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 
 class Program
 {
 	static async Task Main(string[] args)
 	{
-		var host = CreateHostBuilder(args).Build();
-		await host.RunAsync();
+		var builder = Host.CreateDefaultBuilder(args)
+			.UseWindowsService() // Configura il processo come un servizio Windows
+			.ConfigureServices((hostContext, services) =>
+			{
+				services.AddHostedService<MyBackgroundService>(); // Registra il servizio personalizzato
+				services.AddIdroAlertERApplication();
+			})
+			.ConfigureLogging(logging =>
+			{
+				logging.AddEventLog(); // Aggiunge il logging sugli eventi di Windows
+			});
+
+		await builder.Build().RunAsync();
 	}
 
 	public static IHostBuilder CreateHostBuilder(string[] args) =>
@@ -29,6 +41,6 @@ class Program
 				services.AddSingleton<IConfiguration>(context.Configuration);
 
 				// Aggiungi i servizi dell'applicazione
-				services.AddIdroAlertERApplication();
+				//services.AddIdroAlertERApplication();
 			});
 }
