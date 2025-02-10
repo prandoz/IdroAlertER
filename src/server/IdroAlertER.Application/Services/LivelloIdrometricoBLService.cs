@@ -62,6 +62,7 @@ internal class LivelloIdrometricoBLService : ILivelloIdrometricoBLService
 					_logger.LogDebug($"Valore differente per la stazione {nomeStazione}");
 
 					var messaggio = GeneraMessaggio(valoriStazione);
+					var sogliaMinima = _sogliaMinima;
 
 					switch (_sogliaMinima)
 					{
@@ -155,19 +156,19 @@ internal class LivelloIdrometricoBLService : ILivelloIdrometricoBLService
 
 		messaggio.Append(" in soglia ");
 
-		if (valoriStazione.ValoreAttuale >= valoriStazione.SogliaRossa)
+		if (valoriStazione.SogliaRossa > 0 && valoriStazione.ValoreAttuale >= valoriStazione.SogliaRossa)
 		{
 			messaggio.Append("ROSSA");
 		}
 		else
 		{
-			if (valoriStazione.ValoreAttuale >= valoriStazione.SogliaArancione)
+			if (valoriStazione.SogliaArancione > 0 && valoriStazione.ValoreAttuale >= valoriStazione.SogliaArancione)
 			{
 				messaggio.Append("ARANCIONE");
 			}
 			else
 			{
-				if (valoriStazione.ValoreAttuale >= valoriStazione.SogliaGialla)
+				if (valoriStazione.SogliaGialla > 0 && valoriStazione.ValoreAttuale >= valoriStazione.SogliaGialla)
 				{
 					messaggio.Append("GIALLA");
 				}
@@ -219,10 +220,10 @@ internal class LivelloIdrometricoBLService : ILivelloIdrometricoBLService
 	{
 		double? valoreSoglia = soglia switch
 		{
-			Soglia.Gialla => valoriStazione.SogliaGialla,
-			Soglia.Arancione => valoriStazione.SogliaArancione,
-			Soglia.Rossa => valoriStazione.SogliaRossa,
-			_ => 0
+			Soglia.Arancione => valoriStazione.SogliaArancione.HasValue && valoriStazione.SogliaArancione > 0 ? valoriStazione.SogliaArancione : valoriStazione.SogliaGialla,
+			Soglia.Rossa => valoriStazione.SogliaRossa.HasValue && valoriStazione.SogliaRossa > 0 ? valoriStazione.SogliaRossa
+								: valoriStazione.SogliaArancione.HasValue && valoriStazione.SogliaArancione > 0 ? valoriStazione.SogliaArancione : valoriStazione.SogliaGialla,
+			_ => valoriStazione.SogliaGialla
 		};
 
 		return valoreSoglia > 0

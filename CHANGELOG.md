@@ -1,3 +1,7 @@
+## [3.1.0] - 2025/02/09
+### Modifica
+ - Cambiato il controllo del livello di soglia, nel caso il sensore non preveda tutti i livelli di soglia Giallo, Arancione e Rosso, come il lago di Suviana, ed avverte il cambio di soglia anche se inferiore a quello configurato
+
 ## [3.0.1] - 2025/02/09
 ### Modifica
  - Sistemazione controllo valori soglia

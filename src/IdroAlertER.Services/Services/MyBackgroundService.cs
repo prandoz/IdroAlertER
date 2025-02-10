@@ -42,7 +42,7 @@ public class MyBackgroundService : BackgroundService
 				_nextRun = _schedule.GetNextOccurrence(DateTime.Now); // Calcola la prossima esecuzione
 			}
 
-			await Task.Delay(1000, stoppingToken); // Controlla ogni secondo
+			await Task.Delay(5000, stoppingToken); // Controlla ogni cinque secondi
 		}
 	}
 
