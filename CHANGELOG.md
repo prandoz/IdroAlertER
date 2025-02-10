@@ -1,3 +1,7 @@
+## [3.0.1] - 2025/02/09
+### Modifica
+ - Sistemazione controllo valori soglia
+
 ## [3.0.0] - 2025/02/09
 ### Aggiunta
  - Gestione a servizio
