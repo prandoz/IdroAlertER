@@ -118,13 +118,20 @@ internal class LivelloIdrometricoBLService : ILivelloIdrometricoBLService
 		_timeStampFinale = timeStamp;
 		var valoriStazioni = await _livelloIdrometricoHttpService.GetAsync(_timeStampFinale);
 
-		if (valoriStazioni == null || (valoriStazioni != null && !valoriStazioni.First(vs => vs.NomeStaz == nomeStazione).Value.HasValue))
+		if (valoriStazioni != null && !valoriStazioni.Any(x => x.NomeStaz == nomeStazione))
 		{
-			return await GetValoriStazioniAsync(_timeStampService.GetBefore(_timeStampFinale), nomeStazione);
+			throw new Exception($"Stazione {nomeStazione} non trovata");
 		}
 		else
 		{
-			return valoriStazioni!;
+			if (valoriStazioni == null || (valoriStazioni != null && !valoriStazioni.First(vs => vs.NomeStaz == nomeStazione).Value.HasValue))
+			{
+				return await GetValoriStazioniAsync(_timeStampService.GetBefore(_timeStampFinale), nomeStazione);
+			}
+			else
+			{
+				return valoriStazioni!;
+			}
 		}
 	}
 
