@@ -1,6 +1,7 @@
 ﻿using System.Reflection;
 using IdroAlertER.Application;
 using IdroAlertER.Services.Providers;
+using IdroAlertER.Services.Services;
 using log4net;
 using log4net.Config;
 using Microsoft.Extensions.Configuration;
@@ -22,6 +23,12 @@ class Program
 
 		var builder = Host.CreateDefaultBuilder(args)
 			.UseWindowsService() // Configura il processo come un servizio Windows
+			.ConfigureAppConfiguration((context, config) =>
+			{
+				config.SetBasePath(AppContext.BaseDirectory)
+					.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+					.AddEnvironmentVariables();
+			})
 			.ConfigureLogging(logging =>
 			{
 				logging.ClearProviders();
@@ -36,25 +43,4 @@ class Program
 
 		await builder.Build().RunAsync();
 	}
-
-	public static IHostBuilder CreateHostBuilder(string[] args) =>
-		Host.CreateDefaultBuilder(args)
-			.ConfigureAppConfiguration((context, config) =>
-			{
-				//config.SetBasePath(AppContext.BaseDirectory)
-				//	.AddJsonFile($"appsettings.Development.json", optional: false, reloadOnChange: true)
-				//	.AddEnvironmentVariables();
-
-				config.SetBasePath(AppContext.BaseDirectory)
-					.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
-					.AddEnvironmentVariables();
-			})
-			.ConfigureServices((context, services) =>
-			{
-				// Aggiungi la configurazione per leggere appsettings.json
-				services.AddSingleton<IConfiguration>(context.Configuration);
-
-				// Aggiungi i servizi dell'applicazione
-				//services.AddIdroAlertERApplication();
-			});
 }

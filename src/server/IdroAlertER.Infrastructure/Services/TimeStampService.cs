@@ -23,6 +23,12 @@ internal class TimeStampService : ITimeStampService
 		return Convert(newDateTime.ToString("dd/MM/yyyy"), newDateTime.ToString("HH:mm"));
 	}
 
+	public long GetBeforeOneHour()
+	{
+		var oldDateTime = DateTime.Now.AddHours(-1);
+		return Convert(oldDateTime.ToString("dd/MM/yyyy"), oldDateTime.ToString("HH:mm"));
+	}
+
 	public long Convert(string date, string time)
 	{
 		string format = "dd/MM/yyyy HH:mm"; // Formato atteso

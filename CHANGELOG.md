@@ -1,3 +1,8 @@
+## [3.3.0] - 2025/03/12
+### Modifica
+ - Sistemazione consumo eccessivo RAM
+ - Sistemazione lettura sonde senza dati in maniera ricorsiva
+
 ## [3.2.0] - 2025/02/10
 ### Aggiunta
  - log4net

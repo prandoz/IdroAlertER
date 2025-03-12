@@ -14,7 +14,8 @@ internal class LivelloIdrometricoBLService : ILivelloIdrometricoBLService
 	private readonly ITelegramBotService _telegramHttpService;
 	private readonly IGeocalizzazioneService _geocalizzazioneService;
 	private readonly ITimeStampService _timeStampService;
-	private readonly long _timeStampAttuale;
+	private readonly string _dataConfigurazione;
+	private readonly string _oraConfigurazione;
 	private long _timeStampFinale;
 	private readonly List<string> _nomiStazioni;
 	private readonly string _sogliaMinima;
@@ -28,17 +29,8 @@ internal class LivelloIdrometricoBLService : ILivelloIdrometricoBLService
 		_geocalizzazioneService = geocalizzazioneService;
 		_timeStampService = timeStampService;
 
-		var dataConfigurazione = configuration.GetSection("Test data").Get<string>() ?? string.Empty;
-		var oraConfigurazione = configuration.GetSection("Test ora").Get<string>() ?? string.Empty;
-
-		if (!string.IsNullOrEmpty(dataConfigurazione) && !string.IsNullOrEmpty(oraConfigurazione))
-		{
-			_timeStampAttuale = timeStampService.Convert(dataConfigurazione, oraConfigurazione);
-		}
-		else
-		{
-			_timeStampAttuale = timeStampService.Get();
-		}
+		_dataConfigurazione = configuration.GetSection("Test data").Get<string>() ?? string.Empty;
+		_oraConfigurazione = configuration.GetSection("Test ora").Get<string>() ?? string.Empty;
 
 		_nomiStazioni = configuration.GetSection("Nomi stazioni").Get<List<string>>() ?? [];
 		_sogliaMinima = (configuration.GetSection("Livello minimo alert").Get<string>() ?? Soglia.Arancione).ToLower();
@@ -51,11 +43,18 @@ internal class LivelloIdrometricoBLService : ILivelloIdrometricoBLService
 
 	public async Task ExecuteAsync()
 	{
+		var timeStampAttuale = _timeStampService.Get();
+
+		if (!string.IsNullOrEmpty(_dataConfigurazione) && !string.IsNullOrEmpty(_oraConfigurazione))
+		{
+			timeStampAttuale = _timeStampService.Convert(_dataConfigurazione, _oraConfigurazione);
+		}
+
 		foreach (var nomeStazione in _nomiStazioni)
 		{
 			try
 			{
-				var valoriStazione = await GetValoriStazioneAsync(_timeStampAttuale, nomeStazione);
+				var valoriStazione = await GetValoriStazioneAsync(timeStampAttuale, nomeStazione);
 
 				if (valoriStazione.ValoreAttuale != valoriStazione.ValorePrecedente)
 				{
@@ -126,7 +125,14 @@ internal class LivelloIdrometricoBLService : ILivelloIdrometricoBLService
 		{
 			if (valoriStazioni == null || (valoriStazioni != null && !valoriStazioni.First(vs => vs.NomeStaz == nomeStazione).Value.HasValue))
 			{
-				return await GetValoriStazioniAsync(_timeStampService.GetBefore(_timeStampFinale), nomeStazione);
+				if (timeStamp < _timeStampService.GetBeforeOneHour())
+				{
+					throw new Exception($"Valori stazione {nomeStazione} non trovati");
+				}
+				else
+				{
+					return await GetValoriStazioniAsync(_timeStampService.GetBefore(_timeStampFinale), nomeStazione);
+				}
 			}
 			else
 			{
