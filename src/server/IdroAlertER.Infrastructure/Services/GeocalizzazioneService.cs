@@ -16,7 +16,7 @@ internal class GeocalizzazioneService : IGeocalizzazioneService
 			return "Formato non valido";
 		}
 
-		coordinata = coordinata / 100000.0;
+		coordinata /= 100000.0;
 		int gradi = (int)coordinata;
 		double minutiDecimali = (Math.Abs(coordinata) - Math.Abs(gradi)) * 60;
 		int minuti = (int)minutiDecimali;

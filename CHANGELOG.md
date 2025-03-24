@@ -1,3 +1,7 @@
+## [4.0.0] - 2025/03/24
+### Aggiunta
+ - Sistemazione blocco notifiche in caso di mancanza di dati aggiornati
+
 ## [3.3.0] - 2025/03/12
 ### Modifica
  - Sistemazione consumo eccessivo RAM

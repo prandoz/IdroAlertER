@@ -1,4 +1,5 @@
 ﻿using System.Text;
+using System.Xml.Linq;
 using IdroAlertER.Common.Entities;
 using IdroAlertER.Common.Entities.Results;
 using IdroAlertER.Common.Interfaces.Repositories;
@@ -19,6 +20,11 @@ internal class LivelloIdrometricoBLService : ILivelloIdrometricoBLService
 	private long _timeStampFinale;
 	private readonly List<string> _nomiStazioni;
 	private readonly string _sogliaMinima;
+	private readonly string _xmlNomeFile = "storico.xml";
+	private readonly string _xmlRadice = "Stazioni";
+	private readonly string _xmlElemento = "Stazione";
+	private readonly string _xmlNomeStazione = "NomeStazione";
+	private readonly string _xmlValoreAttuale = "ValoreAttuale";
 
 	public LivelloIdrometricoBLService(ILogger<LivelloIdrometricoBLService> logger, IConfiguration configuration, ILivelloIdrometricoHttpService livelloIdrometricoHttpService, ITelegramBotService telegramHttpService,
 										IGeocalizzazioneService geocalizzazioneService, ITimeStampService timeStampService)
@@ -55,27 +61,33 @@ internal class LivelloIdrometricoBLService : ILivelloIdrometricoBLService
 			try
 			{
 				var valoriStazione = await GetValoriStazioneAsync(timeStampAttuale, nomeStazione);
+				var valoreAttuale = GetStoricoValore(nomeStazione, valoriStazione.ValoreAttuale);
 
-				if (valoriStazione.ValoreAttuale != valoriStazione.ValorePrecedente)
+				if (valoriStazione.ValoreAttuale != valoriStazione.ValorePrecedente
+					&& (!valoreAttuale.HasValue || (valoreAttuale.HasValue && valoriStazione.ValoreAttuale != valoreAttuale)))
 				{
 					_logger.LogDebug($"Valore differente per la stazione {nomeStazione}");
 
 					var messaggio = GeneraMessaggio(valoriStazione);
-					var sogliaMinima = _sogliaMinima;
 
-					switch (_sogliaMinima)
+					if (!string.IsNullOrEmpty(messaggio))
 					{
-						case Soglia.Gialla:
-							await InviaNotificheDaSogliaGiallaAsync(valoriStazione, messaggio);
-							break;
+						var sogliaMinima = _sogliaMinima;
 
-						case Soglia.Arancione:
-							await InviaNotificheDaSogliaArancioneAsync(valoriStazione, messaggio);
-							break;
+						switch (_sogliaMinima)
+						{
+							case Soglia.Gialla:
+								await InviaNotificheDaSogliaGiallaAsync(valoriStazione, messaggio);
+								break;
 
-						case Soglia.Rossa:
-							await InviaNotificheDaSogliaRossaAsync(valoriStazione, messaggio);
-							break;
+							case Soglia.Arancione:
+								await InviaNotificheDaSogliaArancioneAsync(valoriStazione, messaggio);
+								break;
+
+							case Soglia.Rossa:
+								await InviaNotificheDaSogliaRossaAsync(valoriStazione, messaggio);
+								break;
+						}
 					}
 				}
 			}
@@ -141,6 +153,57 @@ internal class LivelloIdrometricoBLService : ILivelloIdrometricoBLService
 		}
 	}
 
+	private double? GetStoricoValore(string nomeStazione, double valore)
+	{
+		double? valoreAttuale = null;
+
+		if (File.Exists(_xmlNomeFile))
+		{
+			var xmlStorico = XDocument.Load(_xmlNomeFile);
+			var valoreTrovato = false;
+
+			if (xmlStorico != null)
+			{
+				var storico = xmlStorico.Descendants(_xmlElemento);
+
+				foreach (var stazione in storico)
+				{
+					var storicoNomeStazione = stazione.Element(_xmlNomeStazione)?.Value;
+					var storicoValoreAttuale = stazione.Element(_xmlValoreAttuale)?.Value;
+
+					if (!String.IsNullOrEmpty(storicoNomeStazione) && storicoNomeStazione == nomeStazione)
+					{
+						valoreTrovato = true;
+
+						if (!String.IsNullOrEmpty(storicoValoreAttuale))
+						{
+							valoreAttuale = Convert.ToDouble(storicoValoreAttuale);
+						}
+
+						stazione.Element(_xmlValoreAttuale)!.Value = valore.ToString();
+					}
+				}
+
+				if (!valoreTrovato)
+				{
+					xmlStorico.Element(_xmlRadice)!.Add(new XElement(_xmlElemento, new XElement(_xmlNomeStazione, nomeStazione), new XElement(_xmlValoreAttuale, valore)));
+				}
+
+			}
+
+			xmlStorico!.Save(_xmlNomeFile);
+		}
+		else
+		{
+			var xmlStorico = new XDocument(new XElement(_xmlRadice, new XElement(_xmlElemento,
+											new XElement(_xmlNomeStazione, nomeStazione), new XElement(_xmlValoreAttuale, valore))));
+
+			xmlStorico.Save(_xmlNomeFile);
+		}
+
+		return valoreAttuale;
+	}
+
 	private string GeneraMessaggio(ValoriStazione valoriStazione)
 	{
 		var differenzaLivello = Math.Round((decimal)(valoriStazione.ValoreAttuale > valoriStazione.ValorePrecedente
@@ -163,7 +226,8 @@ internal class LivelloIdrometricoBLService : ILivelloIdrometricoBLService
 			}
 			else
 			{
-				messaggio.Append("ancora");
+				//messaggio.Append("ancora");
+				return string.Empty;
 			}
 		}
 
@@ -229,7 +293,7 @@ internal class LivelloIdrometricoBLService : ILivelloIdrometricoBLService
 		}
 	}
 
-	private bool InviaNotificaSecondoSoglia(ValoriStazione valoriStazione, string soglia)
+	private static bool InviaNotificaSecondoSoglia(ValoriStazione valoriStazione, string soglia)
 	{
 		double? valoreSoglia = soglia switch
 		{

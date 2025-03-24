@@ -5,16 +5,11 @@ using Microsoft.Extensions.Logging;
 
 namespace IdroAlertER.Services.Providers;
 
-public class Log4NetLogger : ILogger
+public class Log4NetLogger(string name) : ILogger
 {
-	private readonly ILog _log;
+	private readonly ILog _log = LogManager.GetLogger(name);
 
-	public Log4NetLogger(string name)
-	{
-		_log = LogManager.GetLogger(name);
-	}
-
-	public IDisposable BeginScope<TState>(TState state) => null;
+	public IDisposable? BeginScope<TState>(TState state) => null;
 
 	public bool IsEnabled(LogLevel logLevel)
 	{

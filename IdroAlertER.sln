@@ -9,13 +9,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "shared", "shared", "{03D1D3
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{03CE26E0-6ED3-4693-BC1E-2C64AE080020}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IdroAlertER.Services", "src\IdroAlertER.Services\IdroAlertER.Services.csproj", "{0743DC6E-BB1E-4105-8C40-06FAD47A6A11}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IdroAlertER.Common", "src\shared\IdroAlertER.Common\IdroAlertER.Common.csproj", "{7D5557C9-46D3-4669-8F0A-49EAB9271637}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IdroAlertER.Application", "src\server\IdroAlertER.Application\IdroAlertER.Application.csproj", "{67F6E6E7-608B-4A59-BDA3-D768A8F64A7D}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IdroAlertER.Infrastructure", "src\server\IdroAlertER.Infrastructure\IdroAlertER.Infrastructure.csproj", "{33DE771C-679D-4436-8683-E32DCD353F93}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IdroAlertER.Services", "src\server\IdroAlertER.Services\IdroAlertER.Services.csproj", "{FAC5E226-440F-A70D-B245-CBE9519CC970}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -23,10 +23,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{0743DC6E-BB1E-4105-8C40-06FAD47A6A11}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{0743DC6E-BB1E-4105-8C40-06FAD47A6A11}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{0743DC6E-BB1E-4105-8C40-06FAD47A6A11}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{0743DC6E-BB1E-4105-8C40-06FAD47A6A11}.Release|Any CPU.Build.0 = Release|Any CPU
 		{7D5557C9-46D3-4669-8F0A-49EAB9271637}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{7D5557C9-46D3-4669-8F0A-49EAB9271637}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7D5557C9-46D3-4669-8F0A-49EAB9271637}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -39,6 +35,10 @@ Global
 		{33DE771C-679D-4436-8683-E32DCD353F93}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{33DE771C-679D-4436-8683-E32DCD353F93}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{33DE771C-679D-4436-8683-E32DCD353F93}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FAC5E226-440F-A70D-B245-CBE9519CC970}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FAC5E226-440F-A70D-B245-CBE9519CC970}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FAC5E226-440F-A70D-B245-CBE9519CC970}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FAC5E226-440F-A70D-B245-CBE9519CC970}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -46,10 +46,10 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{B9094CF9-3D46-47D7-8F2B-187411749F1C} = {03CE26E0-6ED3-4693-BC1E-2C64AE080020}
 		{03D1D3A3-C102-4EC6-94AB-56C75552A427} = {03CE26E0-6ED3-4693-BC1E-2C64AE080020}
-		{0743DC6E-BB1E-4105-8C40-06FAD47A6A11} = {03CE26E0-6ED3-4693-BC1E-2C64AE080020}
 		{7D5557C9-46D3-4669-8F0A-49EAB9271637} = {03D1D3A3-C102-4EC6-94AB-56C75552A427}
 		{67F6E6E7-608B-4A59-BDA3-D768A8F64A7D} = {B9094CF9-3D46-47D7-8F2B-187411749F1C}
 		{33DE771C-679D-4436-8683-E32DCD353F93} = {B9094CF9-3D46-47D7-8F2B-187411749F1C}
+		{FAC5E226-440F-A70D-B245-CBE9519CC970} = {B9094CF9-3D46-47D7-8F2B-187411749F1C}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {6C6B62D9-565C-4A85-9975-C28CE92C3D57}
