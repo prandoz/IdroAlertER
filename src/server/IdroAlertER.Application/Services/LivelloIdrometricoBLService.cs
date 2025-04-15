@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Globalization;
+using System.Text;
 using System.Xml.Linq;
 using IdroAlertER.Common.Entities;
 using IdroAlertER.Common.Entities.Results;
@@ -17,7 +18,7 @@ internal class LivelloIdrometricoBLService : ILivelloIdrometricoBLService
 	private readonly ITimeStampService _timeStampService;
 	private readonly string _dataConfigurazione;
 	private readonly string _oraConfigurazione;
-	private long _timeStampFinale;
+	private (long timeStamp, DateTime dateTime) _timeStampFinale;
 	private readonly List<string> _nomiStazioni;
 	private readonly string _sogliaMinima;
 	private readonly string _xmlNomeFile = "storico.xml";
@@ -49,18 +50,18 @@ internal class LivelloIdrometricoBLService : ILivelloIdrometricoBLService
 
 	public async Task ExecuteAsync()
 	{
-		var timeStampAttuale = _timeStampService.Get();
+		var dateTimeAttuale = _timeStampService.Get();
 
 		if (!string.IsNullOrEmpty(_dataConfigurazione) && !string.IsNullOrEmpty(_oraConfigurazione))
 		{
-			timeStampAttuale = _timeStampService.Convert(_dataConfigurazione, _oraConfigurazione);
+			dateTimeAttuale = (_timeStampService.Convert(_dataConfigurazione, _oraConfigurazione), DateTime.ParseExact($"{_dataConfigurazione} {_oraConfigurazione}", "dd/MM/yyyy HH:mm", CultureInfo.InvariantCulture));
 		}
 
 		foreach (var nomeStazione in _nomiStazioni)
 		{
 			try
 			{
-				var valoriStazione = await GetValoriStazioneAsync(timeStampAttuale, nomeStazione);
+				var valoriStazione = await GetValoriStazioneAsync(dateTimeAttuale, nomeStazione);
 				var valoreAttuale = GetStoricoValore(nomeStazione, valoriStazione.ValoreAttuale);
 
 				if (valoriStazione.ValoreAttuale != valoriStazione.ValorePrecedente
@@ -98,7 +99,7 @@ internal class LivelloIdrometricoBLService : ILivelloIdrometricoBLService
 		}
 	}
 
-	private async Task<ValoriStazione> GetValoriStazioneAsync(long timeStamp, string nomeStazione)
+	private async Task<ValoriStazione> GetValoriStazioneAsync((long, DateTime) timeStamp, string nomeStazione)
 	{
 		var valoriStazioneAttuale = await GetValoreStazioneAsync(timeStamp, nomeStazione);
 		var valoriStazionePrecedente = await GetValoreStazioneAsync(_timeStampService.GetBefore(_timeStampFinale), nomeStazione);
@@ -118,16 +119,16 @@ internal class LivelloIdrometricoBLService : ILivelloIdrometricoBLService
 		};
 	}
 
-	private async Task<IdroAlertHttpResult> GetValoreStazioneAsync(long timeStamp, string nomeStazione)
+	private async Task<IdroAlertHttpResult> GetValoreStazioneAsync((long, DateTime) timeStamp, string nomeStazione)
 	{
 		var valoriStazioni = await GetValoriStazioniAsync(timeStamp, nomeStazione);
 		return valoriStazioni.First(vsa => vsa.NomeStaz == nomeStazione);
 	}
 
-	private async Task<List<IdroAlertHttpResult>> GetValoriStazioniAsync(long timeStamp, string nomeStazione)
+	private async Task<List<IdroAlertHttpResult>> GetValoriStazioniAsync((long timeStamp, DateTime dateTime) timeStamp, string nomeStazione)
 	{
 		_timeStampFinale = timeStamp;
-		var valoriStazioni = await _livelloIdrometricoHttpService.GetAsync(_timeStampFinale);
+		var valoriStazioni = await _livelloIdrometricoHttpService.GetAsync(_timeStampFinale.timeStamp);
 
 		if (valoriStazioni != null && !valoriStazioni.Any(x => x.NomeStaz == nomeStazione))
 		{
@@ -137,7 +138,7 @@ internal class LivelloIdrometricoBLService : ILivelloIdrometricoBLService
 		{
 			if (valoriStazioni == null || (valoriStazioni != null && !valoriStazioni.First(vs => vs.NomeStaz == nomeStazione).Value.HasValue))
 			{
-				if (timeStamp < _timeStampService.GetBeforeOneHour())
+				if (timeStamp.timeStamp < _timeStampService.GetBeforeOneHour())
 				{
 					throw new Exception($"Valori stazione {nomeStazione} non trovati");
 				}
@@ -177,7 +178,7 @@ internal class LivelloIdrometricoBLService : ILivelloIdrometricoBLService
 
 						if (!String.IsNullOrEmpty(storicoValoreAttuale))
 						{
-							valoreAttuale = Convert.ToDouble(storicoValoreAttuale);
+							valoreAttuale = Convert.ToDouble(storicoValoreAttuale.Replace('.', ','));
 						}
 
 						stazione.Element(_xmlValoreAttuale)!.Value = valore.ToString();

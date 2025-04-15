@@ -1,3 +1,7 @@
+## [4.1.0] - 2025/04/15
+### Modifica
+ - Sistemazione invio notifiche
+
 ## [4.0.0] - 2025/03/24
 ### Aggiunta
  - Sistemazione blocco notifiche in caso di mancanza di dati aggiornati

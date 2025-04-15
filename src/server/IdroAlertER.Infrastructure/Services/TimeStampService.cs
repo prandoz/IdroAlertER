@@ -4,7 +4,7 @@ using IdroAlertER.Common.Interfaces.Services;
 namespace IdroAlertER.Infrastructure.Services;
 internal class TimeStampService : ITimeStampService
 {
-	public long Get()
+	public (long timeStamp, DateTime dateTime) Get()
 	{
 		// Ottenere l'ora attuale in Italia (fuso orario CET)
 		TimeZoneInfo italianTimeZone = TimeZoneInfo.FindSystemTimeZoneById("Central European Standard Time");
@@ -14,13 +14,13 @@ internal class TimeStampService : ITimeStampService
 		DateTime modifiedTime = RoundDownToNearest15Minutes(localTime);
 
 		// Convertire la data modificata in timestamp Unix (millisecondi)
-		return ((DateTimeOffset)modifiedTime).ToUnixTimeMilliseconds();
+		return (((DateTimeOffset)modifiedTime).ToUnixTimeMilliseconds(), modifiedTime);
 	}
 
-	public long GetBefore(long timeStamp)
+	public (long timeStamp, DateTime dateTime) GetBefore((long timeStamp, DateTime dateTime) timeStamp)
 	{
-		var newDateTime = RoundDownToNearest15Minutes(DateTimeOffset.FromUnixTimeMilliseconds(timeStamp).LocalDateTime);
-		return Convert(newDateTime.ToString("dd/MM/yyyy"), newDateTime.ToString("HH:mm"));
+		var newDateTime = RoundDownToNearest15Minutes(timeStamp.dateTime);
+		return (Convert(newDateTime.ToString("dd/MM/yyyy"), newDateTime.ToString("HH:mm")), newDateTime);
 	}
 
 	public long GetBeforeOneHour()
@@ -54,7 +54,8 @@ internal class TimeStampService : ITimeStampService
 
 	private static DateTime RoundDownToNearest15Minutes(DateTime dateTime)
 	{
-		int minutes = dateTime.Minute / 15 * 15; // Trova il multiplo inferiore di 15 minuti
+		var newDateTime = dateTime.AddMinutes(-10);
+		int minutes = newDateTime.Minute / 15 * 15; // Trova il multiplo inferiore di 15 minuti
 
 		// Se i minuti sono già multipli di 15 ed è maggiore di 0, scaliamo di 15
 		if (dateTime.Minute == minutes && minutes != 0)
@@ -62,6 +63,6 @@ internal class TimeStampService : ITimeStampService
 			minutes -= 15;
 		}
 
-		return new DateTime(dateTime.Year, dateTime.Month, dateTime.Day, dateTime.Hour, minutes, 0);
+		return new DateTime(newDateTime.Year, newDateTime.Month, newDateTime.Day, newDateTime.Hour, minutes, 0);
 	}
 }
