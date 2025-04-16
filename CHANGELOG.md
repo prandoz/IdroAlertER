@@ -1,3 +1,7 @@
+## [4.2.0] - 2025/04/16
+### Modifica
+ - Disabilitato l'invio delle notifiche quando torna sotto soglia
+
 ## [4.1.0] - 2025/04/15
 ### Modifica
  - Sistemazione invio notifiche

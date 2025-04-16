@@ -223,7 +223,8 @@ internal class LivelloIdrometricoBLService : ILivelloIdrometricoBLService
 			|| (valoriStazione.ValorePrecedente >= valoriStazione.SogliaArancione && valoriStazione.ValoreAttuale < valoriStazione.SogliaArancione)
 			|| (valoriStazione.ValorePrecedente >= valoriStazione.SogliaGialla && valoriStazione.ValoreAttuale < valoriStazione.SogliaGialla))
 			{
-				messaggio.Append("tornato");
+				//messaggio.Append("tornato");
+				return string.Empty;
 			}
 			else
 			{
